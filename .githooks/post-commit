@@ -1,0 +1,12 @@
+#!/bin/sh
+
+branch=$(git symbolic-ref --short HEAD 2>/dev/null) || exit 0
+remote=$(git config "branch.$branch.remote")
+
+if [ -z "$remote" ]; then
+  echo "Nenhum remote configurado para a branch $branch."
+  exit 0
+fi
+
+echo "Enviando o commit para $remote/$branch..."
+git push "$remote" "$branch"
