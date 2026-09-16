@@ -790,7 +790,8 @@
         <nav class="nav-links" aria-label="Navegação principal">
           <a href="#institucional">Institucional</a>
           <a href="#sobre">Sobre</a>
-          <a href="#reflexoes">Reflexões</a>
+          <a href="#reflexao">Reflexão
+          </a>
           <a href="#atividades">Atividades</a>
           <a href="#avaliacoes">Avaliações</a>
         </nav>
@@ -949,10 +950,10 @@
         </div>
       </section>
 
-      <section id="reflexoes" class="section reveal">
+      <section id="reflexao" class="section reveal">
         <div class="container">
           <div class="section-header">
-            <span class="eyebrow">Reflexões</span>
+            <span class="eyebrow">Reflexão</span>
             <h2>Registros das aulas e aprendizados</h2>
           </div>
 
@@ -1373,28 +1374,25 @@
         const texto = document.getElementById('reflexao-texto').value.trim();
         const modulo = document.getElementById('reflexao-modulo').value;
         const data = document.getElementById('reflexao-data').value;
-        const arquivo = document.getElementById('reflexao-arquivo').files[0];
 
-        const lista = document.getElementById('reflexao-list');
-        const novoItem = document.createElement('li');
-        novoItem.className = 'record';
+        alert(`
+📝 Para adicionar este registro, faça o seguinte:
 
-        const dataFormatada = data ? new Date(data + 'T00:00:00').toLocaleDateString('pt-BR', {
-          day: '2-digit',
-          month: '2-digit'
-        }) : 'Hoje';
+1. Acesse: https://github.com/thierrycavalheiro-eng/portifolio_algoritmo
+2. Abra a pasta: reflexao/
+3. Clique em: Add file → Create new file
+4. Nome do arquivo: ${titulo.toLowerCase().replace(/\s+/g, '-')}.md
+5. Conteúdo:
+${titulo}
+Data: ${new Date(data).toLocaleDateString('pt-BR')}
 
-        novoItem.innerHTML = `
-          <div class="record-head">
-            <strong>${titulo}</strong>
-            <span>${dataFormatada}</span>
-          </div>
-          <span class="pill">${modulo}</span>
-          <p>${texto}</p>
-          ${arquivo ? `<div class="file-chip">${arquivo.name}</div>` : ''}
-        `;
+${texto}
 
-        lista.prepend(novoItem);
+6. Clique em: Commit changes
+7. Aguarde 10 segundos e recarregue esta página!
+
+O arquivo aparecerá automaticamente! 🚀
+        `);
         refletirForm.reset();
       });
 
@@ -1405,28 +1403,26 @@
         const descricao = document.getElementById('atividade-descricao').value.trim();
         const categoria = document.getElementById('atividade-categoria').value;
         const prazo = document.getElementById('atividade-prazo').value;
-        const arquivo = document.getElementById('atividade-arquivo').files[0];
 
-        const lista = document.getElementById('atividades-list');
-        const novoItem = document.createElement('li');
-        novoItem.className = 'record';
+        alert(`
+📝 Para adicionar esta atividade, faça o seguinte:
 
-        const prazoFormatado = prazo ? new Date(prazo + 'T00:00:00').toLocaleDateString('pt-BR', {
-          day: '2-digit',
-          month: '2-digit'
-        }) : 'Prazo';
+1. Acesse: https://github.com/thierrycavalheiro-eng/portifolio_algoritmo
+2. Abra a pasta: atividades/
+3. Clique em: Add file → Create new file
+4. Nome do arquivo: ${nome.toLowerCase().replace(/\s+/g, '-')}.md
+5. Conteúdo:
+${nome}
+Categoria: ${categoria}
+Data: ${new Date(prazo).toLocaleDateString('pt-BR')}
 
-        novoItem.innerHTML = `
-          <div class="record-head">
-            <strong>${nome}</strong>
-            <span>${prazoFormatado}</span>
-          </div>
-          <span class="pill">${categoria}</span>
-          <p>${descricao}</p>
-          ${arquivo ? `<div class="file-chip">${arquivo.name}</div>` : ''}
-        `;
+${descricao}
 
-        lista.prepend(novoItem);
+6. Clique em: Commit changes
+7. Aguarde 10 segundos e recarregue esta página!
+
+O arquivo aparecerá automaticamente! 🚀
+        `);
         atividadeForm.reset();
       });
     </script>
