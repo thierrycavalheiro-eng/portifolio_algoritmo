@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Portfolio Estudantil | Desenvolvimento Multiplataforma</title>
+    <meta
+      name="description"
+      content="Landing page de portfólio estudantil do curso de Desenvolvimento Multiplataforma - Fatec Indaiatuba, com seção sobre, reflexões, atividades e avaliações."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Source+Sans+3:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #0a0a0f;
+        --bg-soft: #11131a;
+        --panel: rgba(18, 20, 29, 0.92);
+        --panel-strong: #161922;
+        --panel-alt: #0f1118;
+        --card: rgba(17, 19, 27, 0.9);
+        --line: rgba(255, 255, 255, 0.08);
+        --text: #edf3ff;
+        --muted: #a9b2c3;
+        --accent: #5cc8ff;
+        --accent-soft: rgba(92, 200, 255, 0.18);
+        --accent-strong: #7ae0ff;
+        --success: #67d1a7;
+        --warning: #f9d77e;
+        --shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+        --radius: 22px;
+        --radius-sm: 16px;
+        --container: min(1160px, calc(100vw - 2rem));
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Source Sans 3", sans-serif;
+        background:
+          radial-gradient(circle at top left, rgba(92, 200, 255, 0.12), transparent 26%),
+          radial-gradient(circle at right center, rgba(74, 136, 255, 0.14), transparent 22%),
+          var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+      }
+
+      img {
+        max-width: 100%;
+        display: block;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      button,
+      input,
+      textarea,
+      select {
+        font: inherit;
+      }
+
+      .container {
+        width: var(--container);
+        margin: 0 auto;
+      }
+
+      .section {
+        padding: 4.5rem 0;
+      }
+
+      .section-header {
+        max-width: 620px;
+        margin-bottom: 2rem;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 0.8rem;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.02);
+        color: var(--accent-strong);
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .eyebrow::before {
+        content: "";
+        width: 0.6rem;
+        height: 0.6rem;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--accent), #b8f0ff);
+        box-shadow: 0 0 16px rgba(92, 200, 255, 0.75);
+      }
+
+      h1,
+      h2,
+      h3,
+      h4 {
+        margin: 0 0 0.8rem;
+        font-family: "Outfit", sans-serif;
+        letter-spacing: -0.03em;
+        line-height: 1.05;
+      }
+
+      h1 {
+        font-size: clamp(2.6rem, 4vw, 5rem);
+      }
+
+      h2 {
+        font-size: clamp(2rem, 3vw, 3rem);
+      }
+
+      h3 {
+        font-size: clamp(1.25rem, 2vw, 1.8rem);
+      }
+
+      p {
+        margin: 0;
+        color: var(--muted);
+      }
+
+      .site-header {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        backdrop-filter: blur(14px);
+        background: rgba(10, 10, 15, 0.46);
+        border-bottom: 1px solid transparent;
+        transition: background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+      }
+
+      .site-header.scrolled {
+        background: rgba(10, 10, 15, 0.76);
+        border-color: var(--line);
+        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.18);
+      }
+
+      .nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        min-height: 76px;
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-weight: 700;
+        font-family: "Outfit", sans-serif;
+        letter-spacing: 0.04em;
+      }
+
+      .brand-mark {
+        width: 1.1rem;
+        height: 1.1rem;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--accent), #96e7ff);
+        box-shadow: 0 0 24px rgba(92, 200, 255, 0.7);
+      }
+
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 1.4rem;
+        color: var(--muted);
+        font-size: 0.96rem;
+      }
+
+      .nav-links a {
+        transition: color 0.2s ease;
+      }
+
+      .nav-links a:hover,
+      .nav-links a:focus-visible {
+        color: var(--text);
+      }
+
+      .nav-cta,
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.55rem;
+        border: 1px solid rgba(92, 200, 255, 0.35);
+        background: linear-gradient(135deg, rgba(92, 200, 255, 0.16), rgba(92, 200, 255, 0.04));
+        color: var(--text);
+        border-radius: 999px;
+        padding: 0.82rem 1.25rem;
+        font-weight: 700;
+        transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+      }
+
+      .nav-cta:hover,
+      .btn:hover,
+      .btn:focus-visible {
+        transform: translateY(-2px);
+        box-shadow: 0 18px 26px rgba(92, 200, 255, 0.14);
+        border-color: rgba(92, 200, 255, 0.7);
+      }
+
+      .hero {
+        padding: 5rem 0 2rem;
+      }
+
+      .hero-grid {
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 2rem;
+        align-items: center;
+      }
+
+      .lead {
+        font-size: 1.08rem;
+        max-width: 60ch;
+      }
+
+      .hero-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-top: 2rem;
+      }
+
+      .btn-secondary {
+        background: transparent;
+        border-color: var(--line);
+      }
+
+      .hero-stats {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(110px, 1fr));
+        gap: 1rem;
+        margin-top: 2.25rem;
+      }
+
+      .stat {
+        padding: 1rem 1rem 0.9rem;
+        background: rgba(255, 255, 255, 0.015);
+        border: 1px solid var(--line);
+        border-radius: var(--radius-sm);
+      }
+
+      .stat strong {
+        display: block;
+        font-size: clamp(1.4rem, 2vw, 2rem);
+        font-family: "Outfit", sans-serif;
+        color: var(--text);
+      }
+
+      .stat span {
+        color: var(--muted);
+        font-size: 0.85rem;
+      }
+
+      .profile-card {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        padding: 1rem;
+      }
+
+      .profile-visual {
+        position: relative;
+        width: min(100%, 420px);
+        min-height: 440px;
+        border-radius: 30px;
+        background:
+          linear-gradient(160deg, rgba(92, 200, 255, 0.2), rgba(255, 255, 255, 0.04) 38%, rgba(15, 17, 24, 1) 100%),
+          var(--panel-alt);
+        border: 1px solid var(--line);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+      }
+
+      .profile-visual::before,
+      .profile-visual::after {
+        content: "";
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(16px);
+      }
+
+      .profile-visual::before {
+        width: 240px;
+        height: 240px;
+        right: -30px;
+        top: 30px;
+        background: rgba(92, 200, 255, 0.15);
+      }
+
+      .profile-visual::after {
+        width: 180px;
+        height: 180px;
+        left: -20px;
+        bottom: 55px;
+        background: rgba(103, 209, 167, 0.14);
+      }
+
+      .avatar {
+        position: absolute;
+        inset: 42px 26px 42px 26px;
+        border-radius: 26px;
+        background:
+          radial-gradient(circle at 50% 28%, rgba(255,255,255,0.18), rgba(255,255,255,0) 18%),
+          linear-gradient(180deg, rgba(19,23,33,0.7), rgba(19,23,33,0.98));
+        border: 1px solid rgba(255,255,255,0.08);
+        display: grid;
+        place-items: center;
+      }
+
+      .portrait {
+        position: relative;
+        width: 220px;
+        height: 220px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, rgba(92,200,255,0.35), rgba(31,40,52,0.8));
+        border: 1px solid rgba(255,255,255,0.12);
+        box-shadow: inset 0 0 0 10px rgba(255,255,255,0.03), 0 20px 35px rgba(4, 9, 16, 0.6);
+      }
+
+      .portrait::before,
+      .portrait::after {
+        content: "";
+        position: absolute;
+      }
+
+      .portrait::before {
+        width: 94px;
+        height: 94px;
+        background: linear-gradient(180deg, #d8ecff, #acd1ff);
+        border-radius: 50%;
+        left: 50%;
+        transform: translateX(-50%);
+        top: 28px;
+        box-shadow: inset 0 -15px 20px rgba(16, 28, 58, 0.28);
+      }
+
+      .portrait::after {
+        width: 140px;
+        height: 92px;
+        background: linear-gradient(180deg, #d9edff, #b8d3ff);
+        border-radius: 72px 72px 30px 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: 32px;
+        box-shadow: inset 0 -18px 18px rgba(16, 28, 58, 0.24);
+      }
+
+      .profile-badge {
+        position: absolute;
+        bottom: 18px;
+        left: 18px;
+        padding: 0.7rem 0.9rem;
+        border-radius: 14px;
+        border: 1px solid rgba(255,255,255,0.1);
+        background: rgba(9, 11, 17, 0.8);
+        backdrop-filter: blur(10px);
+      }
+
+      .profile-badge strong {
+        display: block;
+        font-size: 1.05rem;
+      }
+
+      .profile-badge span {
+        color: var(--muted);
+        font-size: 0.82rem;
+      }
+
+      .grid-2 {
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 1.5rem;
+      }
+
+      .panel {
+        background: linear-gradient(180deg, rgba(18, 20, 29, 0.9), rgba(12, 13, 20, 0.88));
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+      }
+
+      .info-panel {
+        padding: 2rem;
+      }
+
+      .institution-list {
+        display: grid;
+        gap: 1rem;
+        margin-top: 1.4rem;
+      }
+
+      .institution-item {
+        display: flex;
+        gap: 0.9rem;
+        align-items: flex-start;
+        padding: 0.9rem 1rem;
+        border-radius: 14px;
+        border: 1px solid var(--line);
+        background: rgba(255,255,255,0.015);
+      }
+
+      .institution-item .dot {
+        width: 11px;
+        height: 11px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--accent), var(--success));
+        margin-top: 0.4rem;
+        box-shadow: 0 0 14px rgba(92, 200, 255, 0.55);
+      }
+
+      .institution-item small {
+        display: inline-block;
+        margin-bottom: 0.3rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--accent-strong);
+      }
+
+      .about-wrap {
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 1.5rem;
+      }
+
+      .about-text {
+        padding: 2rem;
+      }
+
+      .about-text p + p {
+        margin-top: 1rem;
+      }
+
+      .skills {
+        padding: 2rem;
+      }
+
+      .skill-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.7rem;
+        margin-top: 1.2rem;
+      }
+
+      .tag {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.52rem 0.85rem;
+        border-radius: 999px;
+        border: 1px solid rgba(92, 200, 255, 0.18);
+        background: rgba(92, 200, 255, 0.06);
+        color: var(--text);
+        font-size: 0.82rem;
+        font-weight: 600;
+      }
+
+      .quote-box {
+        margin-top: 1.5rem;
+        padding: 1.1rem 1.2rem;
+        border-left: 2px solid var(--accent);
+        border-radius: 0 14px 14px 0;
+        background: rgba(92, 200, 255, 0.04);
+        color: var(--text);
+      }
+
+      .content-grid {
+        display: grid;
+        grid-template-columns: 0.95fr 1.05fr;
+        gap: 1.5rem;
+      }
+
+      .form-card,
+      .stream-card {
+        padding: 1.5rem;
+      }
+
+      form {
+        display: grid;
+        gap: 1rem;
+      }
+
+      label {
+        display: grid;
+        gap: 0.45rem;
+        color: var(--text);
+        font-weight: 600;
+      }
+
+      input,
+      textarea,
+      select {
+        width: 100%;
+        border-radius: 14px;
+        border: 1px solid rgba(255,255,255,0.08);
+        background: rgba(255,255,255,0.02);
+        color: var(--text);
+        padding: 0.85rem 0.95rem;
+        outline: none;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+      }
+
+      input:focus,
+      textarea:focus,
+      select:focus {
+        border-color: rgba(92, 200, 255, 0.65);
+        box-shadow: 0 0 0 4px rgba(92, 200, 255, 0.13);
+      }
+
+      textarea {
+        min-height: 140px;
+        resize: vertical;
+      }
+
+      .inline-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.9rem;
+      }
+
+      .list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: 1rem;
+      }
+
+      .record {
+        padding: 1rem 1rem 0.85rem;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: rgba(255,255,255,0.015);
+        transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .record:hover {
+        transform: translateY(-2px);
+        border-color: rgba(92, 200, 255, 0.38);
+        box-shadow: 0 18px 30px rgba(0,0,0,0.18);
+      }
+
+      .record-head {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: 0.6rem;
+      }
+
+      .record-head strong {
+        font-family: "Outfit", sans-serif;
+        font-size: 1.02rem;
+      }
+
+      .record-head span,
+      .meta {
+        color: var(--muted);
+        font-size: 0.78rem;
+      }
+
+      .record p {
+        margin-top: 0.3rem;
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        align-self: start;
+        padding: 0.45rem 0.6rem;
+        border-radius: 999px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        background: rgba(103, 209, 167, 0.12);
+        color: var(--success);
+        border: 1px solid rgba(103, 209, 167, 0.18);
+      }
+
+      .pill.warning {
+        background: rgba(249, 215, 126, 0.08);
+        color: var(--warning);
+        border-color: rgba(249, 215, 126, 0.18);
+      }
+
+      .file-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.42rem 0.65rem;
+        border-radius: 999px;
+        background: rgba(255,255,255,0.04);
+        border: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 0.75rem;
+      }
+
+      .file-chip::before {
+        content: "";
+        width: 0.42rem;
+        height: 0.42rem;
+        border-radius: 50%;
+        background: var(--accent);
+      }
+
+      .project-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1.2rem;
+      }
+
+      .project-card {
+        position: relative;
+        padding: 1.2rem 1.2rem 1.3rem;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: linear-gradient(180deg, rgba(17,19,28,0.9), rgba(12,15,20,0.92));
+        overflow: hidden;
+        transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+      }
+
+      .project-card:hover {
+        transform: translateY(-5px);
+        border-color: rgba(92, 200, 255, 0.46);
+        box-shadow: 0 28px 42px rgba(0,0,0,0.2);
+      }
+
+      .project-card::before {
+        content: "";
+        position: absolute;
+        inset: 0 auto auto 0;
+        width: 100%;
+        height: 4px;
+        background: linear-gradient(90deg, var(--accent), rgba(92,200,255,0.22), transparent);
+      }
+
+      .project-card:nth-child(2)::before {
+        background: linear-gradient(90deg, var(--success), rgba(103,209,167,0.3), transparent);
+      }
+
+      .project-card:nth-child(3)::before {
+        background: linear-gradient(90deg, #9ec5ff, rgba(158,197,255,0.35), transparent);
+      }
+
+      .project-card .mini-tag {
+        display: inline-flex;
+        width: fit-content;
+        padding: 0.38rem 0.58rem;
+        border-radius: 999px;
+        background: rgba(255,255,255,0.03);
+        border: 1px solid var(--line);
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--accent-strong);
+      }
+
+      .project-card h3 {
+        margin-top: 0.9rem;
+      }
+
+      .project-card p {
+        margin-bottom: 1rem;
+      }
+
+      .project-card ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+
+      .project-card li {
+        padding: 0.34rem 0.55rem;
+        border-radius: 999px;
+        background: rgba(255,255,255,0.02);
+        border: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 0.7rem;
+      }
+
+      .assessment-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1.2rem;
+      }
+
+      .assessment-card {
+        padding: 1.25rem;
+      }
+
+      .score {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 4.3rem;
+        height: 4.3rem;
+        border-radius: 50%;
+        font-family: "Outfit", sans-serif;
+        font-size: 1.4rem;
+        font-weight: 700;
+        background: radial-gradient(circle at 30% 30%, rgba(92, 200, 255, 0.28), rgba(92, 200, 255, 0.08) 42%, rgba(10,10,15,0.3) 100%);
+        border: 1px solid rgba(92, 200, 255, 0.25);
+        box-shadow: inset 0 0 18px rgba(92, 200, 255, 0.08);
+      }
+
+      .assessment-meta {
+        display: grid;
+        gap: 0.5rem;
+        margin-top: 1rem;
+      }
+
+      .footer {
+        border-top: 1px solid var(--line);
+        padding: 2rem 0 2.5rem;
+      }
+
+      .footer-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .muted-text {
+        color: var(--muted);
+      }
+
+      .reveal {
+        opacity: 0;
+        transform: translateY(18px);
+        transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      .reveal.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      @media (max-width: 920px) {
+        .hero-grid,
+        .about-wrap,
+        .content-grid,
+        .project-grid,
+        .assessment-grid,
+        .grid-2 {
+          grid-template-columns: 1fr;
+        }
+
+        .nav-links {
+          display: none;
+        }
+      }
+
+      @media (max-width: 600px) {
+        .section {
+          padding: 3.6rem 0;
+        }
+
+        .hero {
+          padding-top: 4rem;
+        }
+
+        .hero-actions,
+        .inline-row,
+        .footer-row {
+          grid-template-columns: 1fr;
+          display: grid;
+        }
+
+        .hero-stats {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .profile-visual {
+          min-height: 390px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="site-header" id="top">
+      <div class="container nav">
+        <a href="#top" class="brand" aria-label="Início do portfólio">
+          <span class="brand-mark" aria-hidden="true"></span>
+          <span>Portfolio</span>
+        </a>
+
+        <nav class="nav-links" aria-label="Navegação principal">
+          <a href="#institucional">Institucional</a>
+          <a href="#sobre">Sobre</a>
+          <a href="#reflexoes">Reflexões</a>
+          <a href="#atividades">Atividades</a>
+          <a href="#avaliacoes">Avaliações</a>
+        </nav>
+
+        <a href="#atividades" class="nav-cta">Ver atividades</a>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero reveal">
+        <div class="container hero-grid">
+          <div>
+            <span class="eyebrow">Desenvolvimento Multiplataforma</span>
+            <h1>Fatec Indaiatuba</h1>
+            <p class="lead">
+              Estudante de Desenvolvimento Multiplataforma com foco em lógica de programação,
+              resolução de problemas e construção de interfaces digitais com organização, clareza e propósito.
+            </p>
+
+            <div class="hero-actions">
+              <a href="#sobre" class="btn">Conhecer perfil</a>
+              <a href="#avaliacoes" class="btn btn-secondary">Ver avaliações</a>
+            </div>
+
+            <div class="hero-stats" aria-label="Estatísticas do estudante">
+              <div class="stat">
+                <strong>2026</strong>
+                <span>Período</span>
+              </div>
+              <div class="stat">
+                <strong>5+</strong>
+                <span>Projetos</span>
+              </div>
+              <div class="stat">
+                <strong>92%</strong>
+                <span>Desempenho</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="profile-card">
+            <div class="profile-visual" aria-label="Ilustração de perfil do estudante">
+              <div class="avatar">
+                <div class="portrait" aria-hidden="true"></div>
+              </div>
+              <div class="profile-badge">
+                <strong>Aluno de TI</strong>
+                <span>Algoritmos e Lógica de Programação</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="institucional" class="section reveal">
+        <div class="container">
+          <div class="section-header">
+            <span class="eyebrow">Apresentação institucional</span>
+            <h2>Curso e disciplina em foco</h2>
+          </div>
+
+          <div class="grid-2">
+            <article class="panel info-panel">
+              <h3>Desenvolvimento Multiplataforma</h3>
+              <p>
+                O curso de Desenvolvimento Multiplataforma oferece uma base sólida em lógica,
+                programação, interfaces, banco de dados e criação de soluções digitais para múltiplas plataformas.
+              </p>
+
+              <div class="institution-list">
+                <div class="institution-item">
+                  <span class="dot" aria-hidden="true"></span>
+                  <div>
+                    <small>Instituição</small>
+                    <h4>Fatec Indaiatuba</h4>
+                  </div>
+                </div>
+
+                <div class="institution-item">
+                  <span class="dot" aria-hidden="true"></span>
+                  <div>
+                    <small>Disciplina</small>
+                    <h4>Algoritmos e Lógica de Programação</h4>
+                  </div>
+                </div>
+
+                <div class="institution-item">
+                  <span class="dot" aria-hidden="true"></span>
+                  <div>
+                    <small>Objetivo</small>
+                    <h4>Construir raciocínio estruturado, resolução de problemas e pensamento computacional.</h4>
+                  </div>
+                </div>
+              </div>
+            </article>
+
+            <aside class="panel info-panel">
+              <h3>Perfil do estudante</h3>
+              <p>
+                Busco desenvolver habilidades que unem criatividade, análise lógica e solução prática para
+                problemas reais de tecnologia, com foco em aprendizagem contínua e entrega de valor.
+              </p>
+              <div class="quote-box">
+                “A programação é uma ferramenta de transformação: começa com organização mental e termina com
+                impacto real no mundo digital.”
+              </div>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      <section id="sobre" class="section reveal">
+        <div class="container">
+          <div class="section-header">
+            <span class="eyebrow">Sobre mim</span>
+            <h2>Um perfil técnico e consciente</h2>
+          </div>
+
+          <div class="about-wrap">
+            <article class="panel about-text">
+              <p>
+                Sou um estudante de tecnologia em formação, com interesse especial em desenvolvimento web,
+                lógica computacional e criação de soluções práticas. Busco aprender por meio da prática,
+                explorando problemas reais, entendendo requisitos e transformando ideias em produtos claros,
+                funcionais e bem estruturados.
+              </p>
+              <p>
+                Minha trajetória acadêmica enfatiza a importância de boas bases em algoritmos, estrutura de dados,
+                organização de código e pensamento crítico. Acredito que a tecnologia deve ser usada para resolver
+                desafios de forma eficiente, acessível e com foco em experiência do usuário.
+              </p>
+              <p>
+                Com uma abordagem de aprendizagem contínua, busco desenvolver competências em programação,
+                comunicação e análise, conectando teoria e prática em projetos acadêmicos e pessoais.
+              </p>
+            </article>
+
+            <aside class="panel skills">
+              <h3>Principais competências</h3>
+              <div class="skill-tags" aria-label="Lista de tecnologias e ferramentas">
+                <span class="tag">HTML</span>
+                <span class="tag">CSS</span>
+                <span class="tag">JavaScript</span>
+                <span class="tag">Python</span>
+                <span class="tag">SQL</span>
+                <span class="tag">Git</span>
+                <span class="tag">GitHub</span>
+                <span class="tag">Figma</span>
+                <span class="tag">Bootstrap</span>
+                <span class="tag">Responsive Design</span>
+              </div>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      <section id="reflexoes" class="section reveal">
+        <div class="container">
+          <div class="section-header">
+            <span class="eyebrow">Reflexões</span>
+            <h2>Registros das aulas e aprendizados</h2>
+          </div>
+
+          <div class="content-grid">
+            <article class="panel form-card">
+              <h3>Adicionar registro</h3>
+              <form id="reflexao-form">
+                <label>
+                  Título
+                  <input type="text" id="reflexao-titulo" placeholder="Ex: Estruturas condicionais" required />
+                </label>
+
+                <label>
+                  Campo de reflexão
+                  <textarea id="reflexao-texto" placeholder="Descreva o conteúdo aprendido, dúvidas ou aplicação prática..." required></textarea>
+                </label>
+
+                <div class="inline-row">
+                  <label>
+                    Módulo
+                    <select id="reflexao-modulo">
+                      <option value="Lógica">Lógica</option>
+                      <option value="Algoritmos">Algoritmos</option>
+                      <option value="Estruturas">Estruturas</option>
+                      <option value="Prática">Prática</option>
+                    </select>
+                  </label>
+
+                  <label>
+                    Data
+                    <input type="date" id="reflexao-data" required />
+                  </label>
+                </div>
+
+                <label>
+                  Anexar arquivo
+                  <input type="file" id="reflexao-arquivo" />
+                </label>
+
+                <button type="submit" class="btn">Salvar reflexão</button>
+              </form>
+            </article>
+
+            <aside class="panel stream-card">
+              <h3>Registros recentes</h3>
+              <ul class="list" id="reflexoes-list">
+                <li class="record">
+                  <div class="record-head">
+                    <strong>Introdução à lógica</strong>
+                    <span>16/09</span>
+                  </div>
+                  <span class="pill">Lógica</span>
+                  <p>Aprendi a decompor problemas em etapas simples e identificar os pontos essenciais antes de programar.</p>
+                </li>
+
+                <li class="record">
+                  <div class="record-head">
+                    <strong>Fluxo de decisão</strong>
+                    <span>12/09</span>
+                  </div>
+                  <span class="pill warning">Algoritmos</span>
+                  <p>As condicionais ficaram mais claras quando testei cenários de diferentes entradas e resultados esperados.</p>
+                  <div class="file-chip">exemplo-decisao.pdf</div>
+                </li>
+              </ul>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      <section id="atividades" class="section reveal">
+        <div class="container">
+          <div class="section-header">
+            <span class="eyebrow">Atividades</span>
+            <h2>Aplicação prática em sala</h2>
+          </div>
+
+          <div class="content-grid">
+            <article class="panel form-card">
+              <h3>Enviar atividade</h3>
+              <form id="atividade-form">
+                <label>
+                  Nome da atividade
+                  <input type="text" id="atividade-nome" placeholder="Ex: Exercício de laços" required />
+                </label>
+
+                <label>
+                  Descrição
+                  <textarea id="atividade-descricao" placeholder="Descreva o objetivo da atividade e o que foi desenvolvido." required></textarea>
+                </label>
+
+                <div class="inline-row">
+                  <label>
+                    Categoria
+                    <select id="atividade-categoria">
+                      <option value="Algoritmo">Algoritmo</option>
+                      <option value="Estrutura">Estrutura</option>
+                      <option value="Projeto">Projeto</option>
+                      <option value="Estudo">Estudo</option>
+                    </select>
+                  </label>
+
+                  <label>
+                    Prazo
+                    <input type="date" id="atividade-prazo" required />
+                  </label>
+                </div>
+
+                <label>
+                  Upload de arquivo
+                  <input type="file" id="atividade-arquivo" />
+                </label>
+
+                <button type="submit" class="btn">Enviar atividade</button>
+              </form>
+            </article>
+
+            <aside class="panel stream-card">
+              <h3>Atividades pendentes e entregues</h3>
+              <ul class="list" id="atividades-list">
+                <li class="record">
+                  <div class="record-head">
+                    <strong>Exercício de laços</strong>
+                    <span>18/09</span>
+                  </div>
+                  <span class="pill">Algoritmo</span>
+                  <p>Desenvolvimento de solução para repetir ações com controle de fluxo e condições.</p>
+                  <div class="file-chip">atividade-lacos.py</div>
+                </li>
+
+                <li class="record">
+                  <div class="record-head">
+                    <strong>Simulador de cálculo</strong>
+                    <span>22/09</span>
+                  </div>
+                  <span class="pill warning">Projeto</span>
+                  <p>Criação de uma interface simples para calcular operações com base em entradas do usuário.</p>
+                </li>
+              </ul>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      <section id="avaliacoes" class="section reveal">
+        <div class="container">
+          <div class="section-header">
+            <span class="eyebrow">Avaliações</span>
+            <h2>Desempenho e evolução</h2>
+          </div>
+
+          <div class="assessment-grid">
+            <article class="panel assessment-card">
+              <div class="score">9.4</div>
+              <div class="assessment-meta">
+                <h3>Prova de lógica</h3>
+                <p>Excelente compreensão de estruturas condicionais, operadores e interpretação de problemas.</p>
+              </div>
+            </article>
+
+            <article class="panel assessment-card">
+              <div class="score">8.8</div>
+              <div class="assessment-meta">
+                <h3>Atividade prática</h3>
+                <p>Boa aplicação de conceitos em exercícios práticos, com foco em clareza e execução correta.</p>
+              </div>
+            </article>
+
+            <article class="panel assessment-card">
+              <div class="score">9.1</div>
+              <div class="assessment-meta">
+                <h3>Projeto de estudos</h3>
+                <p>Desenvolvimento consistente com boa organização, raciocínio lógico e capacidade de uso de ferramentas.</p>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="container footer-row">
+        <div>
+          <strong>Portfolio Estudantil</strong>
+          <div class="muted-text">Fatec Indaiatuba · Desenvolvimento Multiplataforma</div>
+        </div>
+        <div class="muted-text">Algoritmos e Lógica de Programação</div>
+      </div>
+    </footer>
+
+    <script>
+      const header = document.querySelector('.site-header');
+      const revealItems = document.querySelectorAll('.reveal');
+
+      window.addEventListener('scroll', () => {
+        header.classList.toggle('scrolled', window.scrollY > 18);
+      });
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.15 }
+      );
+
+      revealItems.forEach((item) => observer.observe(item));
+
+      const refletirForm = document.getElementById('reflexao-form');
+      const atividadeForm = document.getElementById('atividade-form');
+
+      refletirForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+
+        const titulo = document.getElementById('reflexao-titulo').value.trim();
+        const texto = document.getElementById('reflexao-texto').value.trim();
+        const modulo = document.getElementById('reflexao-modulo').value;
+        const data = document.getElementById('reflexao-data').value;
+        const arquivo = document.getElementById('reflexao-arquivo').files[0];
+
+        const lista = document.getElementById('reflexoes-list');
+        const novoItem = document.createElement('li');
+        novoItem.className = 'record';
+
+        const dataFormatada = data ? new Date(data + 'T00:00:00').toLocaleDateString('pt-BR', {
+          day: '2-digit',
+          month: '2-digit'
+        }) : 'Hoje';
+
+        novoItem.innerHTML = `
+          <div class="record-head">
+            <strong>${titulo}</strong>
+            <span>${dataFormatada}</span>
+          </div>
+          <span class="pill">${modulo}</span>
+          <p>${texto}</p>
+          ${arquivo ? `<div class="file-chip">${arquivo.name}</div>` : ''}
+        `;
+
+        lista.prepend(novoItem);
+        refletirForm.reset();
+      });
+
+      atividadeForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+
+        const nome = document.getElementById('atividade-nome').value.trim();
+        const descricao = document.getElementById('atividade-descricao').value.trim();
+        const categoria = document.getElementById('atividade-categoria').value;
+        const prazo = document.getElementById('atividade-prazo').value;
+        const arquivo = document.getElementById('atividade-arquivo').files[0];
+
+        const lista = document.getElementById('atividades-list');
+        const novoItem = document.createElement('li');
+        novoItem.className = 'record';
+
+        const prazoFormatado = prazo ? new Date(prazo + 'T00:00:00').toLocaleDateString('pt-BR', {
+          day: '2-digit',
+          month: '2-digit'
+        }) : 'Prazo';
+
+        novoItem.innerHTML = `
+          <div class="record-head">
+            <strong>${nome}</strong>
+            <span>${prazoFormatado}</span>
+          </div>
+          <span class="pill">${categoria}</span>
+          <p>${descricao}</p>
+          ${arquivo ? `<div class="file-chip">${arquivo.name}</div>` : ''}
+        `;
+
+        lista.prepend(novoItem);
+        atividadeForm.reset();
+      });
+    </script>
+  </body>
+</html>
