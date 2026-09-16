@@ -1132,15 +1132,16 @@
           const token = sessionStorage.getItem('github-token');
           const response = await fetch(url, {
             headers: {
-              'Cache-Control': 'no-cache',
-              'Pragma': 'no-cache',
               ...(token ? { Authorization: `Bearer ${token}` } : {})
             }
           });
-          if (!response.ok) throw new Error('Arquivo não encontrado');
+          if (!response.ok) {
+            const details = await response.json().catch(() => ({}));
+            throw new Error(details.message || `GitHub retornou o erro ${response.status}.`);
+          }
           return await response.json();
         } catch (error) {
-          console.error('Erro ao buscar arquivo:', error);
+          console.error('Erro ao buscar arquivo no GitHub:', error);
           return null;
         }
       };
@@ -1153,8 +1154,6 @@
           const token = sessionStorage.getItem('github-token');
           const response = await fetch(url, {
             headers: {
-              'Cache-Control': 'no-cache',
-              'Pragma': 'no-cache',
               ...(token ? { Authorization: `Bearer ${token}` } : {})
             }
           });
@@ -1166,8 +1165,10 @@
           githubFolderErrors[folderPath] = '';
           return Array.isArray(files) ? files : [];
         } catch (error) {
-          githubFolderErrors[folderPath] = error.message;
-          console.error('Erro ao buscar pasta:', error);
+          githubFolderErrors[folderPath] = error.message === 'Failed to fetch'
+            ? 'Não foi possível conectar ao GitHub. Verifique sua internet, o endereço do site e as permissões do token.'
+            : error.message;
+          console.error('Erro ao buscar pasta no GitHub:', error);
           return [];
         }
       };
@@ -1270,6 +1271,10 @@
         githubStatus.className = `github-status ${type}`.trim();
       };
 
+      const formatGithubError = (error) => error.message === 'Failed to fetch'
+        ? 'Não foi possível conectar ao GitHub. Verifique sua internet, o endereço do site e as permissões do token.'
+        : error.message;
+
       const getGithubToken = () => githubTokenInput.value.trim() || sessionStorage.getItem('github-token') || '';
 
       const encodeBase64 = (value) => {
@@ -1354,7 +1359,7 @@
           await sincronizarGitHub();
         } catch (error) {
           sessionStorage.removeItem('github-token');
-          setGithubStatus(error.message, 'error');
+          setGithubStatus(formatGithubError(error), 'error');
         } finally {
           githubConnectButton.disabled = false;
         }
@@ -1378,7 +1383,7 @@
           refletirForm.reset();
           sincronizarGitHub();
         } catch (error) {
-          setGithubStatus(error.message, 'error');
+          setGithubStatus(formatGithubError(error), 'error');
         } finally {
           setFormLoading(refletirForm, false);
         }
@@ -1402,7 +1407,7 @@
           atividadeForm.reset();
           sincronizarGitHub();
         } catch (error) {
-          setGithubStatus(error.message, 'error');
+          setGithubStatus(formatGithubError(error), 'error');
         } finally {
           setFormLoading(atividadeForm, false);
         }
