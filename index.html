@@ -333,37 +333,16 @@
         width: 220px;
         height: 220px;
         border-radius: 50%;
-        background: linear-gradient(135deg, rgba(92,200,255,0.35), rgba(31,40,52,0.8));
         border: 1px solid rgba(255,255,255,0.12);
-        box-shadow: inset 0 0 0 10px rgba(255,255,255,0.03), 0 20px 35px rgba(4, 9, 16, 0.6);
+        box-shadow: 0 20px 35px rgba(4, 9, 16, 0.6);
+        overflow: hidden;
       }
 
-      .portrait::before,
-      .portrait::after {
-        content: "";
-        position: absolute;
-      }
-
-      .portrait::before {
-        width: 94px;
-        height: 94px;
-        background: linear-gradient(180deg, #d8ecff, #acd1ff);
-        border-radius: 50%;
-        left: 50%;
-        transform: translateX(-50%);
-        top: 28px;
-        box-shadow: inset 0 -15px 20px rgba(16, 28, 58, 0.28);
-      }
-
-      .portrait::after {
-        width: 140px;
-        height: 92px;
-        background: linear-gradient(180deg, #d9edff, #b8d3ff);
-        border-radius: 72px 72px 30px 30px;
-        left: 50%;
-        transform: translateX(-50%);
-        bottom: 32px;
-        box-shadow: inset 0 -18px 18px rgba(16, 28, 58, 0.24);
+      .portrait img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
       }
 
       .profile-badge {
@@ -853,9 +832,11 @@
           </div>
 
           <div class="profile-card">
-            <div class="profile-visual" aria-label="Ilustração de perfil do estudante">
+            <div class="profile-visual" aria-label="Foto de perfil do estudante">
               <div class="avatar">
-                <div class="portrait" aria-hidden="true"></div>
+                <div class="portrait">
+                  <img src="img/foto.jpg" alt="Foto de perfil" />
+                </div>
               </div>
               <div class="profile-badge">
                 <strong>Aluno de TI</strong>
@@ -1148,6 +1129,18 @@
               </div>
             </article>
           </div>
+
+          <div class="section-header" style="margin-top: 3rem;">
+            <h3>Registros do GitHub</h3>
+          </div>
+          <ul class="list" id="avaliacoes-list">
+            <li class="record">
+              <div class="record-head">
+                <strong>Sincronizando com GitHub...</strong>
+              </div>
+              <p>Carregando avaliações do repositório...</p>
+            </li>
+          </ul>
         </div>
       </section>
     </main>
@@ -1183,6 +1176,168 @@
       );
 
       revealItems.forEach((item) => observer.observe(item));
+
+      // ============ Configuração GitHub ============
+      // Configurado para: thierrycavalheiro-eng/portifolio_algoritmo
+      const GITHUB_CONFIG = {
+        owner: 'thierrycavalheiro-eng', // Seu usuário do GitHub
+        repo: 'portifolio_algoritmo', // Nome do seu repositório
+        branch: 'main' // Branch principal
+      };
+
+      // API GitHub para buscar conteúdo
+      const fetchGitHubFile = async (path) => {
+        const url = `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${path}?ref=${GITHUB_CONFIG.branch}`;
+        try {
+          const response = await fetch(url);
+          if (!response.ok) throw new Error('Arquivo não encontrado');
+          return await response.json();
+        } catch (error) {
+          console.error('Erro ao buscar arquivo:', error);
+          return null;
+        }
+      };
+
+      // Buscar todos os arquivos de uma pasta
+      const fetchGitHubFolder = async (folderPath) => {
+        const url = `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${folderPath}?ref=${GITHUB_CONFIG.branch}`;
+        try {
+          const response = await fetch(url);
+          if (!response.ok) throw new Error('Pasta não encontrada');
+          const files = await response.json();
+          return Array.isArray(files) ? files : [];
+        } catch (error) {
+          console.error('Erro ao buscar pasta:', error);
+          return [];
+        }
+      };
+
+      // Decodificar conteúdo base64 do GitHub
+      const decodeGitHubContent = (content) => {
+        try {
+          return atob(content);
+        } catch (error) {
+          console.error('Erro ao decodificar conteúdo:', error);
+          return '';
+        }
+      };
+
+      // Carregar reflexões do GitHub
+      const carregarReflesoesGitHub = async () => {
+        const files = await fetchGitHubFolder('reflexao');
+        const lista = document.getElementById('reflexoes-list');
+        
+        files.filter(f => f.name.endsWith('.md') || f.name.endsWith('.txt')).forEach(file => {
+          fetchGitHubFile(`reflexao/${file.name}`).then(fileData => {
+            if (fileData && fileData.content) {
+              const conteudo = decodeGitHubContent(fileData.content);
+              const linhas = conteudo.split('\n');
+              const titulo = linhas[0] || file.name;
+              const texto = linhas.slice(1).join('\n').substring(0, 200);
+              
+              const novoItem = document.createElement('li');
+              novoItem.className = 'record';
+              novoItem.innerHTML = `
+                <div class="record-head">
+                  <strong>${titulo}</strong>
+                  <span>${new Date(file.created_at).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })}</span>
+                </div>
+                <span class="pill">GitHub</span>
+                <p>${texto}...</p>
+                <a href="${file.html_url}" target="_blank" style="color: var(--accent); font-size: 0.9rem;">Ver no GitHub →</a>
+              `;
+              
+              if (!lista.querySelector(`[data-file="${file.name}"]`)) {
+                novoItem.setAttribute('data-file', file.name);
+                lista.appendChild(novoItem);
+              }
+            }
+          });
+        });
+      };
+
+      // Carregar atividades do GitHub
+      const carregarAtividadesGitHub = async () => {
+        const files = await fetchGitHubFolder('atividades');
+        const lista = document.getElementById('atividades-list');
+        
+        files.filter(f => f.name.endsWith('.md') || f.name.endsWith('.txt')).forEach(file => {
+          fetchGitHubFile(`atividades/${file.name}`).then(fileData => {
+            if (fileData && fileData.content) {
+              const conteudo = decodeGitHubContent(fileData.content);
+              const linhas = conteudo.split('\n');
+              const titulo = linhas[0] || file.name;
+              const texto = linhas.slice(1).join('\n').substring(0, 200);
+              
+              const novoItem = document.createElement('li');
+              novoItem.className = 'record';
+              novoItem.innerHTML = `
+                <div class="record-head">
+                  <strong>${titulo}</strong>
+                  <span>${new Date(file.created_at).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })}</span>
+                </div>
+                <span class="pill">GitHub</span>
+                <p>${texto}...</p>
+                <a href="${file.html_url}" target="_blank" style="color: var(--accent); font-size: 0.9rem;">Ver no GitHub →</a>
+              `;
+              
+              if (!lista.querySelector(`[data-file="${file.name}"]`)) {
+                novoItem.setAttribute('data-file', file.name);
+                lista.appendChild(novoItem);
+              }
+            }
+          });
+        });
+      };
+
+      // Carregar avaliações do GitHub
+      const carregarAvaliacoesGitHub = async () => {
+        const files = await fetchGitHubFolder('avaliacao');
+        const lista = document.getElementById('avaliacoes-list');
+        
+        if (!lista) return; // Se a lista não existir, pule
+        
+        files.filter(f => f.name.endsWith('.md') || f.name.endsWith('.txt')).forEach(file => {
+          fetchGitHubFile(`avaliacao/${file.name}`).then(fileData => {
+            if (fileData && fileData.content) {
+              const conteudo = decodeGitHubContent(fileData.content);
+              const linhas = conteudo.split('\n');
+              const titulo = linhas[0] || file.name;
+              const texto = linhas.slice(1).join('\n').substring(0, 200);
+              
+              const novoItem = document.createElement('li');
+              novoItem.className = 'record';
+              novoItem.innerHTML = `
+                <div class="record-head">
+                  <strong>${titulo}</strong>
+                  <span>${new Date(file.created_at).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })}</span>
+                </div>
+                <span class="pill">GitHub</span>
+                <p>${texto}...</p>
+                <a href="${file.html_url}" target="_blank" style="color: var(--accent); font-size: 0.9rem;">Ver no GitHub →</a>
+              `;
+              
+              if (!lista.querySelector(`[data-file="${file.name}"]`)) {
+                novoItem.setAttribute('data-file', file.name);
+                lista.appendChild(novoItem);
+              }
+            }
+          });
+        });
+      };
+
+      // Sincronizar com GitHub a cada 30 segundos
+      const sincronizarGitHub = () => {
+        carregarReflesoesGitHub();
+        carregarAtividadesGitHub();
+        carregarAvaliacoesGitHub();
+      };
+
+      // Carregamento inicial
+      sincronizarGitHub();
+      
+      // Auto-sincronizar a cada 30 segundos
+      setInterval(sincronizarGitHub, 30000);
 
       const refletirForm = document.getElementById('reflexao-form');
       const atividadeForm = document.getElementById('atividade-form');
