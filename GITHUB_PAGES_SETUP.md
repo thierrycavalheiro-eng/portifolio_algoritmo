@@ -167,18 +167,7 @@ git push origin main
 ### Rate limit do GitHub?
 
 A API pública tem limite de 60 requisições/hora por IP.
-Para aumentar para 5000/hora, use um token:
-
-```javascript
-// No index.html, adicione seu token:
-const GITHUB_TOKEN = 'seu_token_aqui';
-
-// E modifique o fetch para:
-headers: {
-  'Authorization': `token ${GITHUB_TOKEN}`,
-  'Cache-Control': 'no-cache'
-}
-```
+Para salvar registros pelo site, não coloque o token no código. Crie um token Fine-grained com permissão **Contents: Read and write** para este repositório e conecte-o pelo campo **Token do GitHub** na seção Reflexão. Consulte `GITHUB_SETUP.md` para o passo a passo.
 
 ## 9️⃣ Script para sincronização rápida
 

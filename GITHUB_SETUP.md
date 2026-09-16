@@ -2,6 +2,18 @@
 
 ## Como configurar a integração com GitHub
 
+### Salvar registros diretamente pelo site
+
+Os formulários de Reflexão e Atividades agora podem criar arquivos Markdown diretamente no repositório. Como o GitHub Pages é um site estático, o navegador precisa de um token do GitHub para autorizar essa gravação.
+
+1. Acesse [https://github.com/settings/personal-access-tokens](https://github.com/settings/personal-access-tokens) e crie um token Fine-grained.
+2. Em **Repository access**, selecione **Only select repositories** e escolha `portifolio_algoritmo`.
+3. Em **Repository permissions**, habilite **Contents** como **Read and write**.
+4. Copie o token e cole no campo **Token do GitHub** dentro do site.
+5. Clique em **Conectar**. Depois disso, os formulários criarão os registros nas pastas `reflexao/` e `atividades/` automaticamente.
+
+O token não é salvo no código nem no GitHub: ele fica somente na sessão atual do navegador. Ao fechar a sessão do navegador, será necessário conectá-lo novamente.
+
 ### 1. **Edite o arquivo `index.html`**
 
 Procure pela seção:

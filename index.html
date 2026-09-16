@@ -473,6 +473,44 @@
         padding: 1.5rem;
       }
 
+      .github-connection {
+        display: grid;
+        gap: 0.8rem;
+        margin-bottom: 1.5rem;
+        padding: 1rem 1.2rem;
+        border: 1px solid var(--line);
+        border-radius: var(--radius-sm);
+        background: rgba(124, 169, 130, 0.05);
+      }
+
+      .github-connection p {
+        font-size: 0.9rem;
+      }
+
+      .github-connection-row {
+        display: flex;
+        align-items: end;
+        gap: 0.8rem;
+      }
+
+      .github-connection-row label {
+        flex: 1;
+      }
+
+      .github-status {
+        min-height: 1.3em;
+        color: var(--muted);
+        font-size: 0.84rem;
+      }
+
+      .github-status.success {
+        color: var(--success);
+      }
+
+      .github-status.error {
+        color: #e3a39a;
+      }
+
       form {
         display: grid;
         gap: 1rem;
@@ -741,6 +779,11 @@
           grid-template-columns: repeat(3, minmax(0, 1fr));
         }
 
+        .github-connection-row {
+          align-items: stretch;
+          flex-direction: column;
+        }
+
         .profile-visual {
           min-height: 390px;
         }
@@ -919,6 +962,19 @@
             <h2>Registros das aulas e aprendizados</h2>
           </div>
 
+          <div class="github-connection">
+            <strong>Conectar ao GitHub</strong>
+            <p>Use um token com permissão de escrita neste repositório. Ele fica somente nesta sessão do navegador.</p>
+            <div class="github-connection-row">
+              <label>
+                Token do GitHub
+                <input type="password" id="github-token" autocomplete="off" placeholder="ghp_... ou github_pat_..." />
+              </label>
+              <button type="button" class="btn" id="github-connect">Conectar</button>
+            </div>
+            <div class="github-status" id="github-status" aria-live="polite">Não conectado</div>
+          </div>
+
           <div class="content-grid">
             <article class="panel form-card">
               <h3>Adicionar registro</h3>
@@ -931,6 +987,11 @@
                 <label>
                   Campo de reflexão
                   <textarea id="reflexao-texto" placeholder="Descreva o conteúdo aprendido, dúvidas ou aplicação prática..." required></textarea>
+                </label>
+
+                <label>
+                  Tópicos
+                  <input type="text" id="reflexao-topicos" placeholder="Ex: condicionais, lógica, prática" />
                 </label>
 
                 <div class="inline-row">
@@ -949,11 +1010,6 @@
                     <input type="date" id="reflexao-data" required />
                   </label>
                 </div>
-
-                <label>
-                  Anexar arquivo
-                  <input type="file" id="reflexao-arquivo" />
-                </label>
 
                 <button type="submit" class="btn">Salvar reflexão</button>
               </form>
@@ -989,6 +1045,11 @@
                   <textarea id="atividade-descricao" placeholder="Descreva o objetivo da atividade e o que foi desenvolvido." required></textarea>
                 </label>
 
+                <label>
+                  Tópicos
+                  <input type="text" id="atividade-topicos" placeholder="Ex: JavaScript, funções, validação" />
+                </label>
+
                 <div class="inline-row">
                   <label>
                     Categoria
@@ -1005,11 +1066,6 @@
                     <input type="date" id="atividade-prazo" required />
                   </label>
                 </div>
-
-                <label>
-                  Upload de arquivo
-                  <input type="file" id="atividade-arquivo" />
-                </label>
 
                 <button type="submit" class="btn">Enviar atividade</button>
               </form>
@@ -1108,7 +1164,9 @@
       // Decodificar conteúdo base64 do GitHub
       const decodeGitHubContent = (content) => {
         try {
-          return atob(content);
+          const binary = atob(content.replace(/\s/g, ''));
+          const bytes = Uint8Array.from(binary, (character) => character.charCodeAt(0));
+          return new TextDecoder('utf-8').decode(bytes);
         } catch (error) {
           console.error('Erro ao decodificar conteúdo:', error);
           return '';
@@ -1125,7 +1183,7 @@
             if (fileData && fileData.content) {
               const conteudo = decodeGitHubContent(fileData.content);
               const linhas = conteudo.split('\n');
-              const titulo = linhas[0] || file.name;
+              const titulo = (linhas[0] || file.name).replace(/^#\s*/, '');
               const texto = linhas.slice(1).join('\n').substring(0, 200);
               
               // Usar sha do arquivo como ID único
@@ -1163,7 +1221,7 @@
             if (fileData && fileData.content) {
               const conteudo = decodeGitHubContent(fileData.content);
               const linhas = conteudo.split('\n');
-              const titulo = linhas[0] || file.name;
+              const titulo = (linhas[0] || file.name).replace(/^#\s*/, '');
               const texto = linhas.slice(1).join('\n').substring(0, 200);
               
               // Usar sha do arquivo como ID único
@@ -1205,64 +1263,146 @@
 
       const refletirForm = document.getElementById('reflexao-form');
       const atividadeForm = document.getElementById('atividade-form');
+      const githubTokenInput = document.getElementById('github-token');
+      const githubConnectButton = document.getElementById('github-connect');
+      const githubStatus = document.getElementById('github-status');
 
-      refletirForm.addEventListener('submit', (event) => {
+      const setGithubStatus = (message, type = '') => {
+        githubStatus.textContent = message;
+        githubStatus.className = `github-status ${type}`.trim();
+      };
+
+      const getGithubToken = () => githubTokenInput.value.trim() || sessionStorage.getItem('github-token') || '';
+
+      const encodeBase64 = (value) => {
+        const bytes = new TextEncoder().encode(value);
+        const binary = Array.from(bytes, (byte) => String.fromCharCode(byte)).join('');
+        return btoa(binary);
+      };
+
+      const slugify = (value) => value
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '')
+        .substring(0, 70) || 'registro';
+
+      const formatTopics = (topics) => {
+        const items = topics.split(',').map((topic) => topic.trim()).filter(Boolean);
+        return items.length ? `\n## Tópicos\n${items.map((topic) => `- ${topic}`).join('\n')}\n` : '';
+      };
+
+      const githubRequest = async (path, options = {}) => {
+        const token = getGithubToken();
+        if (!token) throw new Error('Informe um token do GitHub antes de salvar.');
+
+        const response = await fetch(`https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/${path}`, {
+          ...options,
+          headers: {
+            Accept: 'application/vnd.github+json',
+            Authorization: `Bearer ${token}`,
+            'X-GitHub-Api-Version': '2022-11-28',
+            ...(options.headers || {})
+          }
+        });
+
+        if (!response.ok) {
+          const details = await response.json().catch(() => ({}));
+          throw new Error(details.message || `GitHub retornou o erro ${response.status}.`);
+        }
+
+        return response.json();
+      };
+
+      const salvarRegistroGitHub = async (folder, title, content) => {
+        const filename = `${slugify(title)}-${Date.now()}.md`;
+        return githubRequest(`contents/${folder}/${filename}`, {
+          method: 'PUT',
+          body: JSON.stringify({
+            message: `Adiciona registro: ${title}`,
+            content: encodeBase64(content),
+            branch: GITHUB_CONFIG.branch
+          })
+        });
+      };
+
+      const setFormLoading = (form, loading) => {
+        const button = form.querySelector('button[type="submit"]');
+        button.disabled = loading;
+        button.textContent = loading ? 'Salvando...' : form.id === 'reflexao-form' ? 'Salvar reflexão' : 'Enviar atividade';
+      };
+
+      githubTokenInput.value = sessionStorage.getItem('github-token') || '';
+      if (githubTokenInput.value) setGithubStatus('Token disponível nesta sessão. Clique em Conectar para testar.');
+
+      githubConnectButton.addEventListener('click', async () => {
+        const token = githubTokenInput.value.trim();
+        if (!token) {
+          setGithubStatus('Informe um token do GitHub.', 'error');
+          return;
+        }
+
+        githubConnectButton.disabled = true;
+        setGithubStatus('Testando conexão...');
+        try {
+          sessionStorage.setItem('github-token', token);
+          await githubRequest('contents?ref=' + GITHUB_CONFIG.branch);
+          setGithubStatus('Conectado. Seus registros serão salvos no GitHub.', 'success');
+        } catch (error) {
+          sessionStorage.removeItem('github-token');
+          setGithubStatus(error.message, 'error');
+        } finally {
+          githubConnectButton.disabled = false;
+        }
+      });
+
+      refletirForm.addEventListener('submit', async (event) => {
         event.preventDefault();
 
         const titulo = document.getElementById('reflexao-titulo').value.trim();
         const texto = document.getElementById('reflexao-texto').value.trim();
         const modulo = document.getElementById('reflexao-modulo').value;
         const data = document.getElementById('reflexao-data').value;
+        const topicos = document.getElementById('reflexao-topicos').value.trim();
 
-        alert(`
-📝 Para adicionar este registro, faça o seguinte:
-
-1. Acesse: https://github.com/thierrycavalheiro-eng/portifolio_algoritmo
-2. Abra a pasta: reflexao/
-3. Clique em: Add file → Create new file
-4. Nome do arquivo: ${titulo.toLowerCase().replace(/\s+/g, '-')}.md
-5. Conteúdo:
-${titulo}
-Data: ${new Date(data).toLocaleDateString('pt-BR')}
-
-${texto}
-
-6. Clique em: Commit changes
-7. Aguarde 10 segundos e recarregue esta página!
-
-O arquivo aparecerá automaticamente! 🚀
-        `);
-        refletirForm.reset();
+        setFormLoading(refletirForm, true);
+        setGithubStatus('Salvando reflexão no GitHub...');
+        try {
+          const conteudo = `# ${titulo}\n\n**Módulo:** ${modulo}\n**Data:** ${new Date(`${data}T00:00:00`).toLocaleDateString('pt-BR')}\n${formatTopics(topicos)}\n${texto}\n`;
+          await salvarRegistroGitHub('reflexao', titulo, conteudo);
+          setGithubStatus('Reflexão salva no GitHub com sucesso.', 'success');
+          refletirForm.reset();
+          sincronizarGitHub();
+        } catch (error) {
+          setGithubStatus(error.message, 'error');
+        } finally {
+          setFormLoading(refletirForm, false);
+        }
       });
 
-      atividadeForm.addEventListener('submit', (event) => {
+      atividadeForm.addEventListener('submit', async (event) => {
         event.preventDefault();
 
         const nome = document.getElementById('atividade-nome').value.trim();
         const descricao = document.getElementById('atividade-descricao').value.trim();
         const categoria = document.getElementById('atividade-categoria').value;
         const prazo = document.getElementById('atividade-prazo').value;
+        const topicos = document.getElementById('atividade-topicos').value.trim();
 
-        alert(`
-📝 Para adicionar esta atividade, faça o seguinte:
-
-1. Acesse: https://github.com/thierrycavalheiro-eng/portifolio_algoritmo
-2. Abra a pasta: atividades/
-3. Clique em: Add file → Create new file
-4. Nome do arquivo: ${nome.toLowerCase().replace(/\s+/g, '-')}.md
-5. Conteúdo:
-${nome}
-Categoria: ${categoria}
-Data: ${new Date(prazo).toLocaleDateString('pt-BR')}
-
-${descricao}
-
-6. Clique em: Commit changes
-7. Aguarde 10 segundos e recarregue esta página!
-
-O arquivo aparecerá automaticamente! 🚀
-        `);
-        atividadeForm.reset();
+        setFormLoading(atividadeForm, true);
+        setGithubStatus('Salvando atividade no GitHub...');
+        try {
+          const conteudo = `# ${nome}\n\n**Categoria:** ${categoria}\n**Data:** ${new Date(`${prazo}T00:00:00`).toLocaleDateString('pt-BR')}\n${formatTopics(topicos)}\n${descricao}\n`;
+          await salvarRegistroGitHub('atividades', nome, conteudo);
+          setGithubStatus('Atividade salva no GitHub com sucesso.', 'success');
+          atividadeForm.reset();
+          sincronizarGitHub();
+        } catch (error) {
+          setGithubStatus(error.message, 'error');
+        } finally {
+          setFormLoading(atividadeForm, false);
+        }
       });
     </script>
   </body>
