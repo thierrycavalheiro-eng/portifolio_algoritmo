@@ -1122,6 +1122,8 @@
         branch: 'main' // Branch principal
       };
 
+      const githubFolderErrors = {};
+
       // API GitHub para buscar conteúdo (com cache busting)
       const fetchGitHubFile = async (path) => {
         const timestamp = new Date().getTime();
@@ -1156,10 +1158,15 @@
               ...(token ? { Authorization: `Bearer ${token}` } : {})
             }
           });
-          if (!response.ok) throw new Error('Pasta não encontrada');
+          if (!response.ok) {
+            const details = await response.json().catch(() => ({}));
+            throw new Error(details.message || `GitHub retornou o erro ${response.status}.`);
+          }
           const files = await response.json();
+          githubFolderErrors[folderPath] = '';
           return Array.isArray(files) ? files : [];
         } catch (error) {
+          githubFolderErrors[folderPath] = error.message;
           console.error('Erro ao buscar pasta:', error);
           return [];
         }
@@ -1183,6 +1190,14 @@
         const lista = document.getElementById('reflexao-list');
         lista.replaceChildren();
 
+        if (!files.length) {
+          const mensagem = document.createElement('li');
+          mensagem.className = 'record';
+          mensagem.innerHTML = `<p>${githubFolderErrors.reflexao || 'Nenhum registro de reflexão encontrado.'}</p>`;
+          lista.appendChild(mensagem);
+          return;
+        }
+
         const registros = await Promise.all(files
           .filter(file => file.name.endsWith('.md') || file.name.endsWith('.txt'))
           .map(async (file) => ({ file, data: await fetchGitHubFile(`reflexao/${file.name}`) })));
@@ -1197,6 +1212,14 @@
         const files = await fetchGitHubFolder('atividades');
         const lista = document.getElementById('atividades-list');
         lista.replaceChildren();
+
+        if (!files.length) {
+          const mensagem = document.createElement('li');
+          mensagem.className = 'record';
+          mensagem.innerHTML = `<p>${githubFolderErrors.atividades || 'Nenhuma atividade encontrada.'}</p>`;
+          lista.appendChild(mensagem);
+          return;
+        }
 
         const registros = await Promise.all(files
           .filter(file => file.name.endsWith('.md') || file.name.endsWith('.txt'))
@@ -1235,12 +1258,6 @@
       const sincronizarGitHub = async () => {
         await Promise.all([carregarReflesoesGitHub(), carregarAtividadesGitHub()]);
       };
-
-      // Carregamento inicial
-      sincronizarGitHub();
-      
-      // Auto-sincronizar a cada 10 segundos
-      setInterval(sincronizarGitHub, 10000);
 
       const refletirForm = document.getElementById('reflexao-form');
       const atividadeForm = document.getElementById('atividade-form');
@@ -1316,6 +1333,10 @@
 
       githubTokenInput.value = sessionStorage.getItem('github-token') || '';
       if (githubTokenInput.value) setGithubStatus('Token disponível nesta sessão. Clique em Conectar para testar.');
+
+      // Carregar registros somente depois de recuperar o token da sessão.
+      sincronizarGitHub();
+      setInterval(sincronizarGitHub, 10000);
 
       githubConnectButton.addEventListener('click', async () => {
         const token = githubTokenInput.value.trim();
