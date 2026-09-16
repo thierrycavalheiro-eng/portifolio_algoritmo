@@ -998,7 +998,7 @@
 
             <aside class="panel stream-card">
               <h3>Registros recentes</h3>
-              <ul class="list" id="reflexoes-list">
+              <ul class="list" id="reflexao-list">
                 <li class="record">
                   <div class="record-head">
                     <strong>Introdução à lógica</strong>
@@ -1237,7 +1237,7 @@
       // Carregar reflexões do GitHub
       const carregarReflesoesGitHub = async () => {
         const files = await fetchGitHubFolder('reflexao');
-        const lista = document.getElementById('reflexoes-list');
+        const lista = document.getElementById('reflexao-list');
         
         files.filter(f => f.name.endsWith('.md') || f.name.endsWith('.txt')).forEach(file => {
           fetchGitHubFile(`reflexao/${file.name}`).then(fileData => {
@@ -1375,7 +1375,7 @@
         const data = document.getElementById('reflexao-data').value;
         const arquivo = document.getElementById('reflexao-arquivo').files[0];
 
-        const lista = document.getElementById('reflexoes-list');
+        const lista = document.getElementById('reflexao-list');
         const novoItem = document.createElement('li');
         novoItem.className = 'record';
 
